@@ -1,26 +1,26 @@
 "use client"
-import React, { useState } from "react";
-
-
-
+import React, { useEffect, useState } from "react";
 
 export default function PostForm() {
-
-  // ১. Error এবং Loading State
-  const [errors, setErrors] = useState<Record<string,string>>({});
-  const [loading, setLoading] = useState(false); 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
+  const [minDate, setMinDate] = useState("");
+
+  useEffect(() => {
+    const today = new Date();
+    const formatted = [
+      today.getFullYear(),
+      String(today.getMonth() + 1).padStart(2, "0"),
+      String(today.getDate()).padStart(2, "0"),
+    ].join("-");
+
+    setMinDate(formatted);
+  }, []);
 
   function getTodayDate() {
-  const today = new Date();
-
-  return [
-    today.getFullYear(),
-    String(today.getMonth() + 1).padStart(2, "0"),
-    String(today.getDate()).padStart(2, "0"),
-  ].join("-");
-}
-
+    return minDate;
+  }
 
 
   // ২. Validation Function

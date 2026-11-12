@@ -47,21 +47,27 @@ const SignUp = () => {
   const handleImageUpload = async () => {
     if (!image) return undefined;
 
+    const uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL;
+
+    if (!uploadUrl) {
+      return undefined;
+    }
+
     const formData = new FormData();
     formData.append("image", image);
 
-    const res = await fetch("YOUR_BACKEND_UPLOAD_URL", {
+    const res = await fetch(uploadUrl, {
       method: "POST",
       body: formData,
     });
 
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
       throw new Error(data.error || "Image upload failed");
     }
 
-    return data.imageUrl;
+    return data.imageUrl || data.url;
   };
 
   // Registration Function
@@ -84,13 +90,24 @@ const SignUp = () => {
       const imageUrl = await handleImageUpload();
 
       // Better Auth Registration
-      const result = await signUp.email({
+      const payload: {
+        name: string;
+        email: string;
+        password: string;
+        callbackURL: string;
+        image?: string;
+      } = {
         name,
         email,
         password,
-        image: imageUrl,
         callbackURL: "/",
-      });
+      };
+
+      if (imageUrl) {
+        payload.image = imageUrl;
+      }
+
+      const result = await signUp.email(payload);
 
       if (result.error) {
         throw new Error(result.error.message);

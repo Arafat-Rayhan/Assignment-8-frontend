@@ -3,72 +3,78 @@
 import React, { useEffect, useRef, useState } from "react";
 
 export default function PostForm() {
+   
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
-
-  const [minDate] = useState(() => {
-    const today = new Date();
-    return [
-      today.getFullYear(),
-      String(today.getMonth() + 1).padStart(2, "0"),
-      String(today.getDate()).padStart(2, "0"),
-    ].join("-");
-  });
-
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState("");
-
+  const [imagePreview, setImagePreview] = useState<string | null>(null); // ১. প্রিভিউ স্টেট যোগ হলো
+  const fileInputeRef = useRef<HTMLInputElement>(null);
   const imagePreviewRef = useRef<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Cleanup image URL
-  useEffect(() => {
-    return () => {
-      if (imagePreviewRef.current) {
-        URL.revokeObjectURL(imagePreviewRef.current);
-      }
-    };
-  }, []);
 
-  // Image selection
-  function handleImageChange(
-    e: React.ChangeEvent<HTMLInputElement>
-  ) {
-    const file = e.currentTarget.files?.[0] ?? null;
+const handleImageChange = (
+  e: React.ChangeEvent<HTMLInputElement>
+) => {
+  const file = e.target.files?.[0] || null;
 
-    if (imagePreviewRef.current) {
-      URL.revokeObjectURL(imagePreviewRef.current);
-      imagePreviewRef.current = null;
-    }
+  if (!file) return;
 
-    setSelectedImage(file);
-    setImagePreview("");
-    setSuccess("");
-
-    setErrors((prev) => ({ ...prev, image: "" }));
-
-    if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      imagePreviewRef.current = previewUrl;
-      setImagePreview(previewUrl);
-    }
+  // Previous Preview URL Cleanup
+  if (imagePreviewRef.current) {
+    URL.revokeObjectURL(imagePreviewRef.current);
   }
 
-  // Remove image
-  function removeImage() {
+  setSelectedImage(file);
+
+  const previewUrl = URL.createObjectURL(file);
+
+  imagePreviewRef.current = previewUrl;
+  setImagePreview(previewUrl);
+
+  setErrors((prev) => ({
+    ...prev,
+    image: "",
+  }));
+
+  setSuccess("");
+};
+
+
+
+const removeImage = () => {
+  setSelectedImage(null);
+  setImagePreview(null);
+
+  if (imagePreviewRef.current) {
+    URL.revokeObjectURL(imagePreviewRef.current);
+    imagePreviewRef.current = null;
+  }
+
+  if (fileInputeRef.current) {
+    fileInputeRef.current.value = "";
+  }
+};
+
+
+
+const [minDate] = useState<string>(() => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+});
+
+
+useEffect(() => {
+  return () => {
     if (imagePreviewRef.current) {
       URL.revokeObjectURL(imagePreviewRef.current);
-      imagePreviewRef.current = null;
     }
-
-    setSelectedImage(null);
-    setImagePreview("");
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  }
+  };
+}, []);
 
   // Input change
   function handleChange(
@@ -79,6 +85,10 @@ export default function PostForm() {
     setErrors((prev) => ({ ...prev, [name]: "" }));
     setSuccess("");
   }
+
+
+   
+
 
   // Validation
   function validate(
@@ -112,6 +122,9 @@ export default function PostForm() {
     return newErrors;
   }
 
+
+
+
   // Submit
   async function handleSubmit(
     e: React.FormEvent<HTMLFormElement>
@@ -139,7 +152,7 @@ export default function PostForm() {
     setSuccess("");
 
     try {
-      const response = await fetch("http://localhost:4000/post", {
+      const response = await fetch(process.env.NEXT_PUBLIC_CREAT_POST!, {
         method: "POST",
         credentials: "include",
         body: formData,
@@ -156,6 +169,7 @@ export default function PostForm() {
       form.reset();
       removeImage();
 
+
     }catch (error: unknown) {
       setErrors({
         submit:
@@ -167,6 +181,8 @@ export default function PostForm() {
       setLoading(false);
     }
   }
+
+
 
   const inputClass =
     "w-full rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10";
@@ -344,7 +360,7 @@ export default function PostForm() {
                   </p>
 
                   <input
-                    ref={fileInputRef}
+                    ref={fileInputeRef}
                     id="image"
                     type="file"
                     name="image"

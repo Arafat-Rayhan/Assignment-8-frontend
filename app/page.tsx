@@ -1,9 +1,8 @@
- import React from 'react';
- 
+ import NavUi from '../component/nav/NavUi'
  const Home = () => {
   return (
     <div>
-      arafat
+      <NavUi />
     </div>
   );
  };

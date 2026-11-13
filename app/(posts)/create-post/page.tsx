@@ -57,15 +57,28 @@ const removeImage = () => {
   }
 };
 
+const [minDate, setMinDate] = useState<string>("");
+
+useEffect(() => {
+  const timer = setTimeout(() => {
+    const today = new Date();
+
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+
+    setMinDate(`${year}-${month}-${day}`);
+  }, 0);
+
+  return () => clearTimeout(timer);
+}, []);
 
 
-const [minDate] = useState<string>(() => {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, "0");
-  const day = String(today.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-});
+
+
+
+
+
 
 
 useEffect(() => {
@@ -264,7 +277,7 @@ useEffect(() => {
                 </p>
               )}
             </div>
-{/* Description */}
+          {/* Description */}
             <div>
               <label htmlFor="content" className={labelClass}>
                 Event Description <span className="text-red-500">*</span>

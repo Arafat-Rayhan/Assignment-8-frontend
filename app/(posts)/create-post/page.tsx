@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import {categories} from '@/app/lib/categories'
 
 export default function PostForm() {
    
@@ -9,7 +10,9 @@ export default function PostForm() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null); // ১. প্রিভিউ স্টেট যোগ হলো
+  const [imagePreview, setImagePreview] = useState<string | null>(null); 
+  const [location, setLocation] = useState("");
+  const [category, setCategory] = useState("");
   const fileInputeRef = useRef<HTMLInputElement>(null);
   const imagePreviewRef = useRef<string | null>(null);
 
@@ -126,6 +129,7 @@ useEffect(() => {
 
     if (!image) {
       newErrors.image = "Please upload an event image.";
+
     } else if (!image.type.startsWith("image/")) {
       newErrors.image = "Please select a valid image.";
     } else if (image.size > 5 * 1024 * 1024) {
@@ -144,14 +148,21 @@ useEffect(() => {
   ) {
     e.preventDefault();
 
-    const form = e.currentTarget;
-    const formData = new FormData(form);
+   const form = e.currentTarget;
+const formData = new FormData(form);
+
+formData.set("category", category);
+formData.set("location", location);
 
     const data: Record<string, string> = {
-      title: String(formData.get("title") ?? ""),
-      content: String(formData.get("content") ?? ""),
-      eventDate: String(formData.get("eventDate") ?? ""),
-    };
+  title: String(formData.get("title") ?? ""),
+  content: String(formData.get("content") ?? ""),
+  eventDate: String(formData.get("eventDate") ?? ""),
+  location: String(formData.get("location") ?? ""),
+  category: String(formData.get("category") ?? ""),
+};
+
+ 
 
     const newErrors = validate(data, selectedImage);
 
@@ -340,7 +351,45 @@ useEffect(() => {
                 </p>
               )}
             </div>
+{/* Event Location */}
+<div>
+  <label className="mb-2 block text-sm font-semibold text-slate-900">
+    Event Location <span className="text-red-500">*</span>
+  </label>
 
+  <input
+    type="text"
+    name="location"
+    value={location}
+    onChange={(e) => setLocation(e.target.value)}
+    placeholder="location"
+    required
+    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+  />
+</div>
+
+      {/* Category */}
+        <div>
+          <label className="mb-2 block text-sm font-semibold text-slate-900">
+            Category <span className="text-red-500">*</span>
+          </label>
+          <select
+            name='category'
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            required
+            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none         focus:ring-2 focus:ring-indigo-500/20"
+          >
+            <option value="">Select a category</option>
+            {categories.map((c) => (
+             <option key={c.slug} value={c.slug}>
+               {c.name}
+             </option>
+           ))}
+         </select>
+        </div>
+
+            
             {/* Image Upload */}
             <div>
               <label className={labelClass}>

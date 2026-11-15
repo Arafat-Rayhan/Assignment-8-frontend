@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { categories } from "@/app/lib/categories";
-import JoinEventSection from '../../../../component/eventItem/JoinEventSection';
-import {useSession} from '@/app/lib/auth-client'
+import JoinEventSection from "../../../../component/eventItem/JoinEventSection";
+import { useSession } from "@/app/lib/auth-client";
+
 type Post = {
   _id: string;
   title: string;
@@ -19,52 +20,59 @@ type Post = {
 const POST_API = process.env.NEXT_PUBLIC_POSTS_URL;
 
 export default function EventDetailsPage() {
+  return (
+    <Suspense fallback={<LoadingState />}>
+      <EventDetailsPageContent />
+    </Suspense>
+  );
+}
+
+function LoadingState() {
+  return (
+    <div className="flex min-h-[60vh] items-center justify-center">
+      <p className="text-slate-500">Loading event...</p>
+    </div>
+  );
+}
+
+function EventDetailsPageContent() {
   const params = useParams<{ id: string }>();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  
-  // Fetch single post
-  console.log('post id',params.id);
+
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(
-          `${POST_API}/${params.id}`,
-          {
-            credentials: "include",
-          }
-        );
+        const response = await fetch(`${POST_API}/${params.id}`, {
+          credentials: "include",
+        });
 
         const result = await response.json();
 
         if (!response.ok) {
-          throw new Error(
-            result.message || "Failed to load event"
-          );
+          throw new Error(result.message || "Failed to load event");
         }
 
         setPost(result.data);
       } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Something went wrong"
-        );
+        setError(err instanceof Error ? err.message : "Something went wrong");
       } finally {
         setLoading(false);
       }
     };
-    
-    fetchPost();
+
+    if (params.id) {
+      fetchPost();
+    }
   }, [params.id]);
-  
-  const {data:session,isPending} =useSession()
-  if(isPending){
-    return <p>Loading session....................</p>
+
+  const { data: session, isPending } = useSession();
+
+  if (isPending) {
+    return <p>Loading session....................</p>;
   }
 
-  // Loading
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
@@ -72,14 +80,11 @@ export default function EventDetailsPage() {
       </div>
     );
   }
-  
-  // Error
+
   if (error || !post) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <h2 className="text-2xl font-bold text-slate-800">
-          Event not found
-        </h2>
+        <h2 className="text-2xl font-bold text-slate-800">Event not found</h2>
 
         <p className="text-sm text-red-500">
           {error || "This event does not exist."}
@@ -95,10 +100,7 @@ export default function EventDetailsPage() {
     );
   }
 
-  // Find selected category
-  const category = categories.find(
-    (item) => item.slug === post.category
-  );
+  const category = categories.find((item) => item.slug === post.category);
 
   const formattedDate = post.eventDate
     ? new Date(post.eventDate).toLocaleDateString("en-US", {
@@ -110,11 +112,7 @@ export default function EventDetailsPage() {
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-10">
-
-      {/* Main Event Card */}
       <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-
-        {/* Event Image */}
         <div className="aspect-video w-full overflow-hidden bg-slate-100">
           {post.image ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -131,20 +129,16 @@ export default function EventDetailsPage() {
         </div>
 
         <div className="p-6 sm:p-8">
-
-          {/* Category */}
           {category && (
             <span className="rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700">
               {category.name}
             </span>
           )}
 
-          {/* Title */}
           <h1 className="mt-5 text-3xl font-bold text-slate-900 sm:text-4xl">
             {post.title}
           </h1>
 
-          {/* Date and Location */}
           <div className="mt-5 flex flex-wrap gap-5 text-sm text-slate-500">
             <div className="flex items-center gap-2">
               <span>📅</span>
@@ -161,10 +155,7 @@ export default function EventDetailsPage() {
 
           <hr className="my-7 border-slate-200" />
 
-         {/* Post Content */}
-          <h2 className="text-2xl font-bold text-slate-900">
-            About This Event
-          </h2>
+          <h2 className="text-2xl font-bold text-slate-900">About This Event</h2>
 
           <p className="mt-4 whitespace-pre-line leading-8 text-slate-600">
             {post.content}
@@ -172,10 +163,8 @@ export default function EventDetailsPage() {
         </div>
       </div>
 
-      {/* Category Details */}
       {category && (
         <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-
           <span className="text-sm font-semibold uppercase tracking-wider text-indigo-600">
             Category Discussion
           </span>
@@ -184,9 +173,7 @@ export default function EventDetailsPage() {
             About {category.name}
           </h2>
 
-          <p className="mt-4 leading-8 text-slate-600">
-            {category.summary}
-          </p>
+          <p className="mt-4 leading-8 text-slate-600">{category.summary}</p>
 
           <div className="mt-8 space-y-5">
             {category.sections.map((section, index) => (
@@ -198,19 +185,14 @@ export default function EventDetailsPage() {
                   {section.heading}
                 </h3>
 
-                <p className="mt-3 leading-8 text-slate-600">
-                  {section.body}
-                </p>
+                <p className="mt-3 leading-8 text-slate-600">{section.body}</p>
               </article>
             ))}
           </div>
         </section>
       )}
 
-      {/* Join Event Section */}
-      <JoinEventSection postId={post._id} user={session?.user??null} />
-       
-
+      <JoinEventSection postId={post._id} user={session?.user ?? null} />
     </main>
   );
 }

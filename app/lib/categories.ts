@@ -110,57 +110,6 @@ export const categories: Category[] = [
       { heading: "Keep going", body: "If you slip again, repent again. Follow a bad deed with a good one, and stay with people who help you stay on the path." },
     ],
   },
-  // চরিত্র ও সমাজ
-  {
-    slug: "honesty",
-    name: "Honesty and trustworthiness",
-    summary: "Truthfulness and keeping trusts are signs of faith and the foundation of a healthy community.",
-    sections: [
-      { heading: "The path to Paradise", body: "The Prophet ﷺ said truthfulness leads to righteousness, and righteousness leads to Paradise (Bukhari and Muslim)." },
-      { heading: "Amanah", body: "A trust includes money, secrets, a job and a promise. Surah An-Nisa (4:58) commands that trusts be returned to their owners." },
-      { heading: "In daily life", body: "Be honest in business, do not cheat in exams or work, keep your word, and avoid even small lies and exaggeration." },
-    ],
-  },
-  {
-    slug: "parents",
-    name: "Rights of parents",
-    summary: "Kindness to parents comes right after worship of Allah. It is a duty and a path to His pleasure.",
-    sections: [
-      { heading: "A command from Allah", body: "Surah Al-Isra (17:23-24) tells us to be kind to parents and never to say a word of disrespect, even a sigh, when they grow old." },
-      { heading: "What it looks like", body: "Speak gently, listen patiently, care for their needs, visit them often and make dua for them, in life and after death." },
-      { heading: "When it is hard", body: "Even when you disagree, respond with patience and respect. Seek help from family or a trusted elder if the relationship is strained." },
-    ],
-  },
-  {
-    slug: "family-marriage",
-    name: "Family and marriage",
-    summary: "Marriage is a blessing built on mercy, love and shared responsibility, and the family is the first school of faith.",
-    sections: [
-      { heading: "A sign of Allah", body: "Surah Ar-Rum (30:21) says that Allah created spouses for one another and placed love and mercy between them." },
-      { heading: "Rights and duties", body: "Spouses owe each other kindness, honesty, support and respect. The Prophet ﷺ said the best of you are those best to their families (Tirmidhi)." },
-      { heading: "Strong homes", body: "Pray together, make time for each other, settle disagreements calmly and raise children with both discipline and affection." },
-    ],
-  },
-  {
-    slug: "relatives-neighbours",
-    name: "Relatives and neighbours",
-    summary: "Islam asks us to keep family ties and treat neighbours well, because strong communities start close to home.",
-    sections: [
-      { heading: "A clear command", body: "Surah An-Nisa (4:36) tells us to do good to parents, relatives, orphans, the poor and neighbours near and far." },
-      { heading: "The neighbour’s right", body: "The Prophet ﷺ said Jibril kept advising him about the neighbour until he thought the neighbour would become an heir (Bukhari and Muslim)." },
-      { heading: "Small acts", body: "Greet, visit when someone is sick, share food, avoid disturbing them with noise, and never cut ties over small disputes." },
-    ],
-  },
-  {
-    slug: "patience-anger",
-    name: "Patience and controlling anger",
-    summary: "Patience and self-control are signs of strength. They protect relationships and bring the company of Allah.",
-    sections: [
-      { heading: "True strength", body: "The Prophet ﷺ said the strong person is the one who controls himself in anger (Bukhari and Muslim)." },
-      { heading: "Allah is with the patient", body: "Surah Al-Baqarah (2:153) says Allah is with those who are patient. Surah Al-Imran (3:134) praises those who restrain their anger and forgive people." },
-      { heading: "In the moment", body: "Pause before you speak, change your posture, seek refuge in Allah from Shaytan, make wudu, and step away until you are calm." },
-    ],
-  },
  // চরিত্র ও সমাজ
   {
     slug: "honesty",

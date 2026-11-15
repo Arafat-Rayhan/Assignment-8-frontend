@@ -1,9 +1,9 @@
-
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { categories } from "@/app/lib/categories";
+import { authClient } from "@/app/lib/auth-client";
 
 type PostFormProps = {
   mode: "create" | "update";
@@ -45,13 +45,16 @@ export default function PostForm({ mode, postId }: PostFormProps) {
   const CREATE_API = process.env.NEXT_PUBLIC_CREAT_POST;
   const POST_API = process.env.NEXT_PUBLIC_POSTS_URL;
 
-  const [minDate] = useState(() => {
+  const minDate = useMemo(() => {
+    if (typeof window === "undefined") return "";
+
     const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  });
+    const localToday = new Date(
+      today.getTime() - today.getTimezoneOffset() * 60000
+    );
+
+    return localToday.toISOString().slice(0, 10);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -60,6 +63,35 @@ export default function PostForm({ mode, postId }: PostFormProps) {
       }
     };
   }, []);
+
+  // Token function  
+  async function getAndSaveToken(): Promise<string> {
+    try {
+      const { data, error } = await authClient.token();
+
+      if (error) {
+        throw new Error(error.message || "Failed to get JWT token");
+      }
+
+      if (!data?.token) {
+        throw new Error("No token received from authentication");
+      }
+
+      const jwtToken = data.token;
+
+      localStorage.setItem("jwt_token", jwtToken);
+
+      return jwtToken;
+    } catch (err) {
+      const oldToken = localStorage.getItem("jwt_token");
+      if (oldToken) {
+        return oldToken;
+      }
+      throw err;
+    }
+  } 
+
+
 
   useEffect(() => {
     if (!isUpdate || !postId || !POST_API) return;
@@ -70,8 +102,13 @@ export default function PostForm({ mode, postId }: PostFormProps) {
       try {
         setFetching(true);
 
-        const response = await fetch(`${POST_API}/${postId}`, {
+        const token = await getAndSaveToken();
+
+        const response = await fetch(`\( {POST_API}/ \){postId}`, {
           method: "GET",
+          headers: {
+            'authorization': `Bearer ${token}`,
+          },
           credentials: "include",
         });
 
@@ -116,7 +153,6 @@ export default function PostForm({ mode, postId }: PostFormProps) {
     };
   }, [isUpdate, postId, POST_API]);
 
-  // ইনপুট পরিবর্তন
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
@@ -141,7 +177,6 @@ export default function PostForm({ mode, postId }: PostFormProps) {
     }
   }
 
-  // ছবি বাছাই
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
 
@@ -180,7 +215,6 @@ export default function PostForm({ mode, postId }: PostFormProps) {
     setSuccess("");
   }
 
-  // ছবি সরানো
   function removeImage() {
     if (previewRef.current) {
       URL.revokeObjectURL(previewRef.current);
@@ -195,7 +229,6 @@ export default function PostForm({ mode, postId }: PostFormProps) {
     }
   }
 
-  // ভ্যালিডেশন
   function validate() {
     const newErrors: Record<string, string> = {};
 
@@ -228,7 +261,6 @@ export default function PostForm({ mode, postId }: PostFormProps) {
     return newErrors;
   }
 
-  // ফর্ম সাবমিট
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
@@ -266,10 +298,17 @@ export default function PostForm({ mode, postId }: PostFormProps) {
     }
 
     try {
-      const url = isUpdate ? `${POST_API}/${postId}` : CREATE_API!;
+      // ========== Token নেওয়া + Save করা ==========
+      const jwtToken = await getAndSaveToken();
+      // ===========================================
+
+      const url = isUpdate ? `\( {POST_API}/ \){postId}` : CREATE_API!;
 
       const response = await fetch(url, {
-        method: isUpdate ? "PUT" : "POST", // ব্যাকএন্ড রাউটার PUT ব্যবহার করে
+        method: isUpdate ? "PUT" : "POST",
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
         credentials: "include",
         body: formData,
       });
@@ -306,6 +345,8 @@ export default function PostForm({ mode, postId }: PostFormProps) {
       setLoading(false);
     }
   }
+
+
 
   const inputClass =
     "w-full rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10";
@@ -631,3 +672,9 @@ export default function PostForm({ mode, postId }: PostFormProps) {
     </main>
   );
 }
+
+
+
+
+ 
+

@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { authClient } from "@/app/lib/auth-client";
 
-// ব্যাকএন্ড থেকে যে পোস্টের ডাটা আসবে তার টাইপ
 type Post = {
   _id: string;
   title: string;
@@ -12,20 +12,52 @@ type Post = {
   location?: string;
 };
 
-// আপনার .env থেকে পোস্ট API এর URL (যেমন http://localhost:4000/post)
 const POST_API = process.env.NEXT_PUBLIC_POSTS_URL;
 
 export default function JoinedEventsPage() {
-  const [posts, setPosts] = useState<Post[]>([]); // জয়েন করা পোস্টগুলো
-  const [loading, setLoading] = useState(true);   // লোড হচ্ছে কিনা
-  const [error, setError] = useState("");         // এরর মেসেজ
+  const [posts, setPosts] = useState<Post[]>([]);  
+  const [loading, setLoading] = useState(true);   
+  const [error, setError] = useState("");
+       
+  
+  
 
-  // পেজ খুললে একবার ডাটা আনবে
+  async function getAndSaveToken(): Promise<string> {
+    try {
+      const { data, error } = await authClient.token();
+
+      if (error) {
+        throw new Error(error.message || "Failed to get JWT token");
+      }
+
+      if (!data?.token) {
+        throw new Error("No token received from authentication");
+      }
+
+      const jwtToken = data.token;
+
+      localStorage.setItem("jwt_token", jwtToken);
+
+      return jwtToken;
+    } catch (err) {
+      const oldToken = localStorage.getItem("jwt_token");
+      if (oldToken) {
+        return oldToken;
+      }
+      throw err;
+    }
+  }
+
+
   useEffect(() => {
     const fetchJoined = async () => {
       try {
+         const token = await getAndSaveToken();
         const res = await fetch(`${POST_API}/joined`, {
-          credentials: "include", // লগইন কুকি পাঠানোর জন্য, এটা না দিলে verifyAuth আটকে দেবে
+          credentials: "include", 
+            headers: {
+            'authorization': `Bearer ${token}`,
+          },
         });
 
         const result = await res.json();
@@ -34,18 +66,18 @@ export default function JoinedEventsPage() {
           throw new Error(result.message || "Failed to load");
         }
 
-        setPosts(result.data); // ব্যাকএন্ডের data অ্যারেটা state এ রাখা
+        setPosts(result.data);  
       } catch (err) {
         setError(err instanceof Error ? err.message : "Something went wrong");
       } finally {
-        setLoading(false); // সফল হোক বা ব্যর্থ, লোডিং শেষ
+        setLoading(false);  
       }
     };
 
     fetchJoined();
-  }, []);
+  }, []); 
 
-  // ১. লোডিং অবস্থা
+  
   if (loading) {
     return <p className="p-10 text-slate-500">Loading...</p>;
   }
@@ -61,12 +93,10 @@ export default function JoinedEventsPage() {
       <h1 className="text-3xl font-bold text-slate-900">Joined Events</h1>
 
       {posts.length === 0 ? (
-        // কোনো ইভেন্টে জয়েন না করলে
         <p className="mt-6 text-slate-500">
           You haven&apos;t joined any event yet.
         </p>
       ) : (
-        // জয়েন করা ইভেন্টের কার্ড গ্রিড
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => (
             <Link
@@ -74,7 +104,6 @@ export default function JoinedEventsPage() {
               href={`/postDetail/${post._id}`}
               className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md"
             >
-              {/* ছবি */}
               <div className="aspect-video bg-slate-100">
                 {post.image && (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -86,7 +115,6 @@ export default function JoinedEventsPage() {
                 )}
               </div>
 
-              {/* লেখা */}
               <div className="p-4">
                 <h2 className="font-bold text-slate-900">{post.title}</h2>
 

@@ -16,6 +16,7 @@ const menuLinks = [
   { href: "/create-post", label: "Create Event" },
   { href: "/upComingEvents", label: "Upcoming Events" },
   { href: "/joined", label: "Joined event" },
+  { href: "/manageEvent", label: "ManageMyPost" },
 ];
 
 function SparkIcon({ className = "h-5 w-5" }: { className?: string }) {

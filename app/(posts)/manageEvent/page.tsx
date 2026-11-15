@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { authClient } from "@/app/lib/auth-client";
+
 
 type Post = {
   _id: string;
@@ -23,12 +25,53 @@ export default function ManageEventsPage() {
   const [error, setError] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  async function getAndSaveToken(): Promise<string> {
+    try {
+      const { data, error } = await authClient.token();
+
+      if (error) {
+        throw new Error(error.message || "Failed to get JWT token");
+      }
+
+      if (!data?.token) {
+        throw new Error("No token received from authentication");
+      }
+
+      const jwtToken = data.token;
+
+      localStorage.setItem("jwt_token", jwtToken);
+
+      return jwtToken;
+    } catch (err) {
+      const oldToken = localStorage.getItem("jwt_token");
+      if (oldToken) {
+        return oldToken;
+      }
+      throw err;
+    }
+  } 
+ 
+
   useEffect(() => {
     const fetchAll = async () => {
+
       try {
+        const token = await getAndSaveToken();
         const [createdRes, joinedRes] = await Promise.all([
-          fetch(`${POST_API}/my-posts`, { credentials: "include" }),
-          fetch(`${POST_API}/joined`, { credentials: "include" }),
+          fetch(`${POST_API}/my-posts`,{
+             credentials: "include",
+            headers: {
+            'authorization': `Bearer ${token}`,
+          },
+         },
+             ),
+          fetch(`${POST_API}/joined`, {
+             credentials: "include",
+             headers: {
+            'authorization': `Bearer ${token}`,
+          },
+        }
+      ),
         ]);
 
         const createdData = await createdRes.json();
@@ -61,8 +104,13 @@ export default function ManageEventsPage() {
     try {
       setDeletingId(id);
 
+      const token = await getAndSaveToken();
+
       const res = await fetch(`${POST_API}/${id}`, {
         method: "DELETE",
+         headers: {
+            'authorization': `Bearer ${token}`,
+          },
         credentials: "include",
       });
 
@@ -72,7 +120,6 @@ export default function ManageEventsPage() {
         throw new Error(result.message || "Delete failed");
       }
 
-      // সফল হলে লিস্ট থেকে সাথে সাথে সরিয়ে দেওয়া
       setCreatedPosts((prev) => prev.filter((p) => p._id !== id));
     } catch (err) {
       alert(err instanceof Error ? err.message : "Delete failed");

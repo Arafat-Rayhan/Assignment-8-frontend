@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Navbar from '@/component/nav/NavUi'
+import {Suspense} from 'react'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,11 +21,20 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
-    </html>
+   <html lang="en" suppressHydrationWarning>
+  <head>
+    <script
+      dangerouslySetInnerHTML={{
+        __html: `try{if(localStorage.getItem("theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}`,
+      }}
+    />
+  </head>
+  <body className="bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+    <Suspense fallback={<p>loading........</p>} >
+    <Navbar />
+    </Suspense>
+    {children}
+  </body>
+</html>
   );
 }

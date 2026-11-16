@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "@/app/lib/auth-client";
 import { FaGoogle, FaGithub } from "react-icons/fa";
+import {toast} from 'sonner'
 
 import {
   Button,
@@ -61,6 +62,7 @@ const SignIn = () => {
     try {
       setSocialLoading("google");
       await signIn.social({ provider: "google", callbackURL: "/" });
+      toast.success('SUCCESS SIGN UP WITH GOOGLE')
     } catch {
       setErrorMessage("Google sign in failed. Please try again.");
       setSocialLoading(null);
@@ -72,6 +74,7 @@ const SignIn = () => {
     try {
       setSocialLoading("github");
       await signIn.social({ provider: "github", callbackURL: "/" });
+      toast.success('SUCCESS SIGNUP WIHT GITHUB')
     } catch {
       setErrorMessage("GitHub sign in failed. Please try again.");
       setSocialLoading(null);

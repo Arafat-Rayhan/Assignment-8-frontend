@@ -13,7 +13,7 @@ type Post = {
     category: string;
 };
 
-export const instant =false
+// export const instant =false
 async function getPosts(category?: string): Promise<Post[]> {
   const url = new URL(process.env.NEXT_PUBLIC_POSTS_URL!);
   url.searchParams.set("limit", "12");

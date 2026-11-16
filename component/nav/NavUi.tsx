@@ -63,13 +63,18 @@ export default function Navbar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const pathname = usePathname();
+  const [activePathname, setActivePathname] = useState<string | null>(null);
   const router = useRouter();
   const { data: session, isPending } = useSession();
   const user = session?.user ?? null;
-  
+
+  useEffect(() => {
+    setActivePathname(pathname);
+  }, [pathname]);
+
   const linkClass = (href: string) =>
   `rounded-xl px-4 py-2 text-sm font-medium transition-colors ${
-    pathname === href
+    activePathname === href
       ? "bg-indigo-50 text-indigo-700"
       : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
   }`;

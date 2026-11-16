@@ -47,14 +47,15 @@ export default function PostForm({ mode, postId }: PostFormProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [success, setSuccess] = useState("");
 
-  // আজকের তারিখ (লোকাল টাইমজোন অনুযায়ী)
-  const [minDate] = useState(() => {
+  const [minDate, setMinDate] = useState("");
+
+  useEffect(() => {
     const today = new Date();
     const localToday = new Date(
       today.getTime() - today.getTimezoneOffset() * 60000,
     );
-    return localToday.toISOString().slice(0, 10);
-  });
+    setMinDate(localToday.toISOString().slice(0, 10));
+  }, []);
 
   // unmount হলে preview URL মুছে দাও
   useEffect(() => {

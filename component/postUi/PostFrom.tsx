@@ -1,20 +1,9 @@
-<<<<<<< HEAD
-﻿ 
-
-"use client";
+ "use client";
 
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { categories } from "@/app/lib/categories";
 import { getAuthHeaders } from "@/app/lib/auth-headers";
-=======
-"use client";
-
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import { categories } from "@/app/lib/categories";
-import { authClient } from "@/app/lib/auth-client";
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
 
 type PostFormProps = {
   mode: "create" | "update";
@@ -30,6 +19,13 @@ type PostData = {
   category: string;
   image: string;
 };
+
+const CREATE_API = process.env.NEXT_PUBLIC_CREAT_POST;
+const POST_API = process.env.NEXT_PUBLIC_POSTS_URL;
+
+const labelClass = "mb-2 block text-sm font-semibold text-slate-700";
+const inputClass =
+  "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 disabled:opacity-60";
 
 export default function PostForm({ mode, postId }: PostFormProps) {
   const router = useRouter();
@@ -48,80 +44,26 @@ export default function PostForm({ mode, postId }: PostFormProps) {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const [loading, setLoading] = useState(false);
-  const [fetching, setFetching] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [success, setSuccess] = useState("");
 
-<<<<<<< HEAD
-  const CREATE_API = process.env.NEXT_PUBLIC_CREAT_POST;
-  const POST_API = process.env.NEXT_PUBLIC_POSTS_URL;
-
- 
-
-
+  // আজকের তারিখ (লোকাল টাইমজোন অনুযায়ী)
   const [minDate] = useState(() => {
-  const today = new Date();
-  const localToday = new Date(
-    today.getTime() - today.getTimezoneOffset() * 60000,
-  );
-  return localToday.toISOString().slice(0, 10);
-});
-
-  // Update mode: পুরনো পোস্ট লোড
-=======
-  // API URL
-  const CREATE_API = process.env.NEXT_PUBLIC_CREAT_POST;
-  const POST_API = process.env.NEXT_PUBLIC_POSTS_URL;
-
-  const minDate = useMemo(() => {
-    if (typeof window === "undefined") return "";
-
     const today = new Date();
     const localToday = new Date(
-      today.getTime() - today.getTimezoneOffset() * 60000
+      today.getTime() - today.getTimezoneOffset() * 60000,
     );
-
     return localToday.toISOString().slice(0, 10);
-  }, []);
+  });
 
+  // unmount হলে preview URL মুছে দাও
   useEffect(() => {
     return () => {
-      if (previewRef.current) {
-        URL.revokeObjectURL(previewRef.current);
-      }
+      if (previewRef.current) URL.revokeObjectURL(previewRef.current);
     };
   }, []);
 
-  // Token function  
-  async function getAndSaveToken(): Promise<string> {
-    try {
-      const { data, error } = await authClient.token();
-
-      if (error) {
-        throw new Error(error.message || "Failed to get JWT token");
-      }
-
-      if (!data?.token) {
-        throw new Error("No token received from authentication");
-      }
-
-      const jwtToken = data.token;
-
-      localStorage.setItem("jwt_token", jwtToken);
-
-      return jwtToken;
-    } catch (err) {
-      const oldToken = localStorage.getItem("jwt_token");
-      if (oldToken) {
-        return oldToken;
-      }
-      throw err;
-    }
-  } 
-
-
-
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
+  // Update mode: পুরনো পোস্ট লোড
   useEffect(() => {
     if (!isUpdate || !postId || !POST_API) return;
 
@@ -129,23 +71,11 @@ export default function PostForm({ mode, postId }: PostFormProps) {
 
     async function fetchPost() {
       try {
-        setFetching(true);
-
-<<<<<<< HEAD
         const headers = await getAuthHeaders();
 
         const response = await fetch(POST_API + "/" + postId, {
           method: "GET",
           headers,
-=======
-        const token = await getAndSaveToken();
-
-        const response = await fetch(`\( {POST_API}/ \){postId}`, {
-          method: "GET",
-          headers: {
-            'authorization': `Bearer ${token}`,
-          },
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
           credentials: "include",
         });
 
@@ -155,9 +85,9 @@ export default function PostForm({ mode, postId }: PostFormProps) {
           throw new Error(result.message || "Failed to load post.");
         }
 
-        const post: PostData = result.data;
-
         if (!active) return;
+
+        const post: PostData = result.data;
 
         setTitle(post.title || "");
         setContent(post.content || "");
@@ -166,28 +96,16 @@ export default function PostForm({ mode, postId }: PostFormProps) {
         setEventDate(
           post.eventDate
             ? new Date(post.eventDate).toISOString().split("T")[0]
-<<<<<<< HEAD
             : "",
-=======
-            : ""
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
         );
         setImagePreview(post.image || null);
       } catch (error) {
         if (active) {
           setErrors({
             submit:
-<<<<<<< HEAD
               error instanceof Error ? error.message : "Failed to load post.",
-=======
-              error instanceof Error
-                ? error.message
-                : "Failed to load post.",
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
           });
         }
-      } finally {
-        if (active) setFetching(false);
       }
     }
 
@@ -196,21 +114,14 @@ export default function PostForm({ mode, postId }: PostFormProps) {
     return () => {
       active = false;
     };
-  }, [isUpdate, postId, POST_API]);
+  }, [isUpdate, postId]);
 
   function handleChange(
-<<<<<<< HEAD
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >,
   ) {
     const { name, value } = e.target;
-=======
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) {
-    const { name, value } = e.target;
-
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
     setErrors((prev) => ({ ...prev, [name]: "" }));
     setSuccess("");
 
@@ -227,32 +138,18 @@ export default function PostForm({ mode, postId }: PostFormProps) {
       case "location":
         setLocation(value);
         break;
-<<<<<<< HEAD
       case "category":
         setCategory(value);
         break;
-=======
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
     }
   }
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-<<<<<<< HEAD
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
       setErrors((prev) => ({ ...prev, image: "Please select a valid image." }));
-=======
-
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      setErrors((prev) => ({
-        ...prev,
-        image: "Please select a valid image.",
-      }));
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
       e.target.value = "";
       return;
     }
@@ -266,23 +163,13 @@ export default function PostForm({ mode, postId }: PostFormProps) {
       return;
     }
 
-    if (previewRef.current) {
-      URL.revokeObjectURL(previewRef.current);
-    }
+    if (previewRef.current) URL.revokeObjectURL(previewRef.current);
 
     const preview = URL.createObjectURL(file);
-<<<<<<< HEAD
-    previewRef.current = preview;
-    setSelectedImage(file);
-    setImagePreview(preview);
-=======
-
     previewRef.current = preview;
 
     setSelectedImage(file);
     setImagePreview(preview);
-
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
     setErrors((prev) => ({ ...prev, image: "" }));
     setSuccess("");
   }
@@ -295,13 +182,7 @@ export default function PostForm({ mode, postId }: PostFormProps) {
 
     setSelectedImage(null);
     setImagePreview(null);
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
   function validate() {
@@ -317,7 +198,7 @@ export default function PostForm({ mode, postId }: PostFormProps) {
 
     if (!eventDate) {
       newErrors.eventDate = "Please select an event date.";
-    } else if (!isUpdate && minDate && eventDate < minDate) {
+    } else if (!isUpdate && eventDate < minDate) {
       newErrors.eventDate = "Past dates are not allowed.";
     }
 
@@ -340,22 +221,15 @@ export default function PostForm({ mode, postId }: PostFormProps) {
     e.preventDefault();
 
     const newErrors = validate();
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
-    if (isUpdate && (!postId || !POST_API)) {
-      setErrors({ submit: "Update API configuration is missing." });
-      return;
-    }
+    const url = isUpdate ? POST_API + "/" + postId : CREATE_API;
 
-    if (!isUpdate && !CREATE_API) {
-      setErrors({ submit: "Create API configuration is missing." });
+    if (!url || (isUpdate && !postId)) {
+      setErrors({ submit: "API configuration is missing." });
       return;
     }
 
@@ -364,44 +238,19 @@ export default function PostForm({ mode, postId }: PostFormProps) {
     setSuccess("");
 
     const formData = new FormData();
-<<<<<<< HEAD
-=======
-
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
     formData.append("title", title.trim());
     formData.append("content", content.trim());
     formData.append("eventDate", eventDate);
     formData.append("location", location.trim());
     formData.append("category", category);
-
-<<<<<<< HEAD
     if (selectedImage) formData.append("image", selectedImage);
 
     try {
       const headers = await getAuthHeaders();
-      const url = isUpdate ? POST_API + "/" + postId : CREATE_API;
-
-      const response = await fetch(url as string, {
-        method: isUpdate ? "PUT" : "POST",
-        headers,
-=======
-    if (selectedImage) {
-      formData.append("image", selectedImage);
-    }
-
-    try {
-      // ========== Token নেওয়া + Save করা ==========
-      const jwtToken = await getAndSaveToken();
-      // ===========================================
-
-      const url = isUpdate ? `\( {POST_API}/ \){postId}` : CREATE_API!;
 
       const response = await fetch(url, {
         method: isUpdate ? "PUT" : "POST",
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
+        headers,
         credentials: "include",
         body: formData,
       });
@@ -415,29 +264,21 @@ export default function PostForm({ mode, postId }: PostFormProps) {
       setSuccess(
         isUpdate
           ? "Post updated successfully!"
-<<<<<<< HEAD
           : "Post published successfully!",
-=======
-          : "Post published successfully!"
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
       );
 
-      if (!isUpdate) {
+      if (isUpdate) {
+        router.push("/manageEvent");
+        router.refresh();
+      } else {
         setTitle("");
         setContent("");
         setEventDate("");
         setLocation("");
         setCategory("");
         removeImage();
-      } else {
-<<<<<<< HEAD
-        router.push("/manageEvent");
-=======
-        router.push("/manage-events");
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
-        router.refresh();
       }
-    } catch (error: unknown) {
+    } catch (error) {
       setErrors({
         submit:
           error instanceof Error ? error.message : "Something went wrong.",
@@ -447,42 +288,9 @@ export default function PostForm({ mode, postId }: PostFormProps) {
     }
   }
 
-
-
-<<<<<<< HEAD
-
-  const inputClass = "w-full rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10";
-=======
-  const inputClass =
-    "w-full rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10";
-
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
-  const labelClass = "mb-2.5 block text-sm font-semibold text-slate-700";
-
-  if (fetching) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-indigo-100 border-t-indigo-600" />
-<<<<<<< HEAD
-          <p className="mt-4 text-sm font-medium text-slate-500">Loading post information...</p>
-=======
-          <p className="mt-4 text-sm font-medium text-slate-500">
-            Loading post information...
-          </p>
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
-        </div>
-      </div>
-    );
-  }
-
   return (
     <main className="min-h-screen bg-gradient-to-br from-indigo-50 via-slate-50 to-purple-50 px-4 py-10 sm:px-6 lg:py-16">
       <div className="mx-auto max-w-3xl">
-<<<<<<< HEAD
-=======
-        {/* Header */}
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
         <div className="mb-9 text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-100 text-3xl text-indigo-600 shadow-sm">
             ✦
@@ -503,10 +311,6 @@ export default function PostForm({ mode, postId }: PostFormProps) {
           </p>
         </div>
 
-<<<<<<< HEAD
-=======
-        {/* Form Card */}
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
         <div className="overflow-hidden rounded-3xl border border-white bg-white shadow-[0_20px_60px_-25px_rgba(30,41,59,0.2)]">
           <div className="border-b border-slate-100 bg-slate-50/70 px-5 py-6 sm:px-9">
             <div className="flex items-center gap-3">
@@ -516,27 +320,19 @@ export default function PostForm({ mode, postId }: PostFormProps) {
 
               <div>
                 <h2 className="font-bold text-slate-900">Event Information</h2>
-<<<<<<< HEAD
-                <p className="mt-1 text-xs text-slate-500">Complete the information below.</p>
-=======
                 <p className="mt-1 text-xs text-slate-500">
                   Complete the information below.
                 </p>
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
               </div>
             </div>
           </div>
 
-<<<<<<< HEAD
-          <form onSubmit={handleSubmit} noValidate className="space-y-7 p-5 sm:p-9">
-=======
           <form
             onSubmit={handleSubmit}
             noValidate
             className="space-y-7 p-5 sm:p-9"
           >
             {/* Title */}
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
             <div>
               <label htmlFor="title" className={labelClass}>
                 Event Title <span className="text-red-500">*</span>
@@ -551,31 +347,20 @@ export default function PostForm({ mode, postId }: PostFormProps) {
                 className={inputClass}
                 disabled={loading}
               />
-<<<<<<< HEAD
-              {errors.title && <p className="mt-2 text-sm text-red-500">{errors.title}</p>}
-            </div>
-
-            <div>
-              <label htmlFor="content" className={labelClass}>
-                Description <span className="text-red-500">*</span>
-=======
-
               {errors.title && (
-                <p className="mt-2 text-xs text-red-500">{errors.title}</p>
+                <p className="mt-2 text-sm text-red-500">{errors.title}</p>
               )}
             </div>
 
             {/* Description */}
             <div>
               <label htmlFor="content" className={labelClass}>
-                Event Description <span className="text-red-500">*</span>
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
+                Description <span className="text-red-500">*</span>
               </label>
 
               <textarea
                 id="content"
                 name="content"
-<<<<<<< HEAD
                 value={content}
                 onChange={handleChange}
                 rows={6}
@@ -583,9 +368,12 @@ export default function PostForm({ mode, postId }: PostFormProps) {
                 className={inputClass + " resize-none"}
                 disabled={loading}
               />
-              {errors.content && <p className="mt-2 text-sm text-red-500">{errors.content}</p>}
+              {errors.content && (
+                <p className="mt-2 text-sm text-red-500">{errors.content}</p>
+              )}
             </div>
 
+            {/* Date & Location */}
             <div className="grid gap-6 sm:grid-cols-2">
               <div>
                 <label htmlFor="eventDate" className={labelClass}>
@@ -601,7 +389,11 @@ export default function PostForm({ mode, postId }: PostFormProps) {
                   className={inputClass}
                   disabled={loading}
                 />
-                {errors.eventDate && <p className="mt-2 text-sm text-red-500">{errors.eventDate}</p>}
+                {errors.eventDate && (
+                  <p className="mt-2 text-sm text-red-500">
+                    {errors.eventDate}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -617,73 +409,15 @@ export default function PostForm({ mode, postId }: PostFormProps) {
                   className={inputClass}
                   disabled={loading}
                 />
-                {errors.location && <p className="mt-2 text-sm text-red-500">{errors.location}</p>}
+                {errors.location && (
+                  <p className="mt-2 text-sm text-red-500">
+                    {errors.location}
+                  </p>
+                )}
               </div>
             </div>
 
-=======
-                rows={5}
-                value={content}
-                onChange={handleChange}
-                placeholder="Tell people what your event is about..."
-                className={`${inputClass} resize-y`}
-                disabled={loading}
-              />
-
-              {errors.content && (
-                <p className="mt-2 text-xs text-red-500">{errors.content}</p>
-              )}
-
-              <p className="mt-2 text-xs text-slate-400">
-                Minimum 10 characters.
-              </p>
-            </div>
-
-            {/* Date */}
-            <div>
-              <label htmlFor="eventDate" className={labelClass}>
-                Event Date <span className="text-red-500">*</span>
-              </label>
-
-              <input
-                id="eventDate"
-                type="date"
-                name="eventDate"
-                value={eventDate}
-                min={!isUpdate ? minDate : undefined}
-                onChange={handleChange}
-                className={inputClass}
-                disabled={loading}
-              />
-
-              {errors.eventDate && (
-                <p className="mt-2 text-xs text-red-500">{errors.eventDate}</p>
-              )}
-            </div>
-
-            {/* Location */}
-            <div>
-              <label htmlFor="location" className={labelClass}>
-                Event Location <span className="text-red-500">*</span>
-              </label>
-
-              <input
-                id="location"
-                name="location"
-                value={location}
-                onChange={handleChange}
-                placeholder="Enter event location"
-                className={inputClass}
-                disabled={loading}
-              />
-
-              {errors.location && (
-                <p className="mt-2 text-xs text-red-500">{errors.location}</p>
-              )}
-            </div>
-
             {/* Category */}
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
             <div>
               <label htmlFor="category" className={labelClass}>
                 Category <span className="text-red-500">*</span>
@@ -693,29 +427,27 @@ export default function PostForm({ mode, postId }: PostFormProps) {
                 id="category"
                 name="category"
                 value={category}
-<<<<<<< HEAD
-                onChange={(e) => setCategory(e.target.value)}
-=======
-                onChange={(e) => {
-                  setCategory(e.target.value);
-                  setErrors((prev) => ({ ...prev, category: "" }));
-                }}
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
+                onChange={handleChange}
                 className={inputClass}
                 disabled={loading}
               >
                 <option value="">Select a category</option>
-<<<<<<< HEAD
                 {categories.map((cat) => (
-                  <option key={cat.slug} value={cat.slug}>{cat.slug}</option>
+                  <option key={cat.slug} value={cat.slug}>
+                    {cat.name}
+                  </option>
                 ))}
               </select>
-              {errors.category && <p className="mt-2 text-sm text-red-500">{errors.category}</p>}
+              {errors.category && (
+                <p className="mt-2 text-sm text-red-500">{errors.category}</p>
+              )}
             </div>
 
+            {/* Image */}
             <div>
               <label className={labelClass}>
-                Event Image {isUpdate ? "" : <span className="text-red-500">*</span>}
+                Event Image{" "}
+                {!isUpdate && <span className="text-red-500">*</span>}
               </label>
 
               <div className="flex flex-col gap-4 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 sm:p-5">
@@ -728,9 +460,14 @@ export default function PostForm({ mode, postId }: PostFormProps) {
                   disabled={loading}
                 />
 
-                {imagePreview ? (
+                {imagePreview && (
                   <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white">
-                    <img src={imagePreview} alt="Preview" className="h-56 w-full object-cover" />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="h-56 w-full object-cover"
+                    />
                     <button
                       type="button"
                       onClick={removeImage}
@@ -739,130 +476,27 @@ export default function PostForm({ mode, postId }: PostFormProps) {
                       Remove
                     </button>
                   </div>
-                ) : null}
+                )}
               </div>
-              {errors.image && <p className="mt-2 text-sm text-red-500">{errors.image}</p>}
+              {errors.image && (
+                <p className="mt-2 text-sm text-red-500">{errors.image}</p>
+              )}
             </div>
 
+            {/* Messages */}
             {errors.submit && (
               <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-=======
-
-                {categories.map((c) => (
-                  <option key={c.slug} value={c.slug}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-
-              {errors.category && (
-                <p className="mt-2 text-xs text-red-500">{errors.category}</p>
-              )}
-            </div>
-
-            {/* Image Upload */}
-            <div>
-              <label className={labelClass}>
-                Event Cover Image{" "}
-                <span className="text-slate-400">
-                  {isUpdate ? "(Optional)" : "*"}
-                </span>
-              </label>
-
-              {imagePreview ? (
-                <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={imagePreview}
-                    alt="Event preview"
-                    className="h-56 w-full object-cover sm:h-72"
-                  />
-
-                  <div className="flex flex-wrap items-center justify-between gap-3 p-4">
-                    <div>
-                      <p className="text-sm font-semibold text-slate-700">
-                        {selectedImage
-                          ? selectedImage.name
-                          : "Current event image"}
-                      </p>
-
-                      <p className="mt-1 text-xs text-slate-400">
-                        {selectedImage
-                          ? `${(selectedImage.size / (1024 * 1024)).toFixed(2)} MB`
-                          : "Existing image"}
-                      </p>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={removeImage}
-                      disabled={loading}
-                      className="rounded-lg border border-red-100 bg-white px-4 py-2 text-xs font-semibold text-red-500 transition hover:bg-red-50"
-                    >
-                      {isUpdate ? "Change Image ✕" : "Remove Image ✕"}
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <label
-                  htmlFor="image"
-                  className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/70 px-5 py-10 text-center transition hover:border-indigo-400 hover:bg-indigo-50/40"
-                >
-                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-100 text-2xl text-indigo-600">
-                    ↑
-                  </div>
-
-                  <p className="text-sm font-bold text-slate-700">
-                    Click to upload your image
-                  </p>
-
-                  <p className="mt-2 text-xs text-slate-400">
-                    PNG, JPG, JPEG or WEBP
-                  </p>
-
-                  <span className="mt-4 rounded-lg bg-white px-4 py-2 text-xs font-semibold text-indigo-600 shadow-sm ring-1 ring-slate-200">
-                    Browse Files
-                  </span>
-
-                  <p className="mt-3 text-[11px] text-slate-400">
-                    Maximum file size: 5 MB
-                  </p>
-
-                  <input
-                    ref={fileInputRef}
-                    id="image"
-                    type="file"
-                    accept="image/png,image/jpeg,image/webp"
-                    onChange={handleImageChange}
-                    disabled={loading}
-                    className="sr-only"
-                  />
-                </label>
-              )}
-
-              {errors.image && (
-                <p className="mt-2 text-xs text-red-500">{errors.image}</p>
-              )}
-            </div>
-
-            {/* Error */}
-            {errors.submit && (
-              <div
-                role="alert"
-                className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"
-              >
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
                 {errors.submit}
               </div>
             )}
 
-<<<<<<< HEAD
             {success && (
               <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-600">
                 {success}
               </div>
             )}
 
+            {/* Buttons */}
             <div className="flex items-center justify-end gap-3 pt-2">
               <button
                 type="button"
@@ -877,63 +511,16 @@ export default function PostForm({ mode, postId }: PostFormProps) {
                 disabled={loading}
                 className="rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-600/25 disabled:cursor-not-allowed disabled:opacity-70"
               >
-                {loading ? "Saving..." : isUpdate ? "Update Event" : "Create Event"}
+                {loading
+                  ? "Saving..."
+                  : isUpdate
+                    ? "Update Event"
+                    : "Create Event"}
               </button>
             </div>
           </form>
         </div>
-=======
-            {/* Success */}
-            {success && (
-              <div
-                role="status"
-                className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700"
-              >
-                ✓ {success}
-              </div>
-            )}
-
-            {/* Submit */}
-            <div className="border-t border-slate-100 pt-6">
-              <button
-                type="submit"
-                disabled={loading}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-4 text-sm font-bold text-white shadow-lg shadow-indigo-600/20 transition hover:-translate-y-0.5 hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {loading ? (
-                  <>
-                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                    {isUpdate ? "Updating Event..." : "Publishing Event..."}
-                  </>
-                ) : (
-                  <>
-                    {isUpdate ? "Update Event" : "Publish Event"}
-                    <span>→</span>
-                  </>
-                )}
-              </button>
-
-              <p className="mt-4 text-center text-xs text-slate-400">
-                Please review your event details before submitting.
-              </p>
-            </div>
-          </form>
-        </div>
-
-        <p className="mt-6 text-center text-xs text-slate-400">
-          Made for communities, powered by people. ✦
-        </p>
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
       </div>
     </main>
   );
 }
-<<<<<<< HEAD
-=======
-
-
-
-
- 
-
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23

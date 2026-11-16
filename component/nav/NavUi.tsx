@@ -3,20 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-<<<<<<< HEAD
 import { signOut, useSession } from '@/app/lib/auth-client';
-=======
 import { authClient } from '@/app/lib/auth-client';
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
 import ThemeToggle from '@/component/black and white/DarkWhite'
 
 const publicLinks = [
   { href: "/", label: "Home" },
   { href: "/upComingEvents", label: "Upcoming Events" },
-<<<<<<< HEAD
-=======
   { href: "/joined", label: "Joined event" },
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
 ];
 
 const menuLinks = [
@@ -59,11 +53,7 @@ function Avatar({
       className={`${className} flex items-center justify-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700`}
     >
       {(name?.trim()?.[0] ?? "U").toUpperCase()}
-<<<<<<< HEAD
     </span> 
-=======
-    </span>
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
   );
 }
 
@@ -74,7 +64,6 @@ export default function Navbar() {
 
   const pathname = usePathname();
   const router = useRouter();
-<<<<<<< HEAD
   const { data: session, isPending } = useSession();
   const user = session?.user ?? null;
   
@@ -85,18 +74,14 @@ export default function Navbar() {
       : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
   }`;
 
-=======
-  const { data: session, isPending } = authClient.useSession();
-  const user = session?.user;
+  
 
    
 
 
 
 
-
-  // বাইরে ক্লিক করলে বা Esc চাপলে ড্রপডাউন বন্ধ
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
+ 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -115,11 +100,11 @@ export default function Navbar() {
   }, []);
 
   const handleLogout = async () => {
-<<<<<<< HEAD
-    await signOut({
-=======
+ 
+  
+ 
     await authClient.signOut({
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
+ 
       fetchOptions: {
         onSuccess: () => {
           setDropdownOpen(false);
@@ -131,21 +116,9 @@ export default function Navbar() {
     });
   };
 
-<<<<<<< HEAD
-  // const linkClass = (href: string) =>
-  //   `rounded-xl px-4 py-2 text-sm font-medium transition-colors ${
-  //     activePathname === href
-  //       ? "bg-indigo-50 text-indigo-700"
-  //       : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-  //   }`;
-=======
-  const linkClass = (href: string) =>
-    `rounded-xl px-4 py-2 text-sm font-medium transition-colors ${
-      pathname === href
-        ? "bg-indigo-50 text-indigo-700"
-        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-    }`;
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
+  
+   
+ 
 return (
   <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/80 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/80">
     <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
@@ -235,11 +208,9 @@ return (
               href="/sign-in"
               className="rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
             >
-<<<<<<< HEAD
+ 
               Sign in
-=======
-              Log in
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
+ 
             </Link>
             <Link
               href="/sign-up"
@@ -285,11 +256,11 @@ return (
           <Link href="/" onClick={() => setMobileOpen(false)} className={linkClass("/")}>
             Home
           </Link>
-<<<<<<< HEAD
-          <Link href="/upComingEvents" onClick={() => setMobileOpen(false)} className={linkClass("/events")}>
-=======
+ 
+         
+ 
           <Link href="/events" onClick={() => setMobileOpen(false)} className={linkClass("/events")}>
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
+ 
             Upcoming Events
           </Link>
           {user && (
@@ -319,11 +290,8 @@ return (
                 href="/sign-in"
                 className="rounded-xl border border-slate-200 px-4 py-2.5 text-center text-sm font-semibold text-slate-700 dark:border-slate-700 dark:text-slate-200"
               >
-<<<<<<< HEAD
                 Sign in
-=======
-                Log in
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
+  
               </Link>
               <Link
                 href="/sign-up"

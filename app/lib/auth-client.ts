@@ -1,8 +1,6 @@
-<<<<<<< HEAD
 import { createAuthClient } from "better-auth/react";
 import { jwtClient } from "better-auth/client/plugins";
 
-/* ---------- Types ---------- */
 
 export type AuthUser = {
   id: string;
@@ -54,10 +52,9 @@ type AuthClientMethods = {
   signIn: SignInMethod;
   signUp: SignUpMethod;
   signOut: (options?: Record<string, unknown>) => Promise<AuthActionResult>;
-  token: () => Promise<TokenResult>; // jwtClient() প্লাগিন থেকে আসে
+  token: () => Promise<TokenResult>; 
 };
 
-/* ---------- Client ---------- */
 
 const baseURL =
   typeof window !== "undefined"
@@ -71,19 +68,5 @@ export const authClient = createAuthClient({
   plugins: [jwtClient()],
 }) as unknown as AuthClientMethods;
 
-/* ---------- Exports ---------- */
 
 export const { useSession, getSession, signIn, signUp, signOut } = authClient;
-=======
-import { jwtClient } from "better-auth/client/plugins";
-import { createAuthClient } from "better-auth/react";
-
-export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-  plugins:[
-    jwtClient()
-  ]
-});
-
-export const { signIn, signUp, useSession } = authClient;
->>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { getAuthHeaders } from "@/app/lib/auth-headers";
 
 type Post = {
   _id: string;
@@ -21,9 +22,7 @@ export default function JoinedEventsPage() {
   useEffect(() => {
     const fetchJoined = async () => {
       try {
-        const token = typeof window !== "undefined" ? localStorage.getItem("jwt_token") : null;
-        const headers = token ? { Authorization: "Bearer " + token } : {};
-
+        const headers = await getAuthHeaders()
         const res = await fetch(POST_API + "/joined", {
           credentials: "include",
           headers,

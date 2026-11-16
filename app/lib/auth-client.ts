@@ -1,4 +1,7 @@
 import { createAuthClient } from "better-auth/react";
+import { jwtClient } from "better-auth/client/plugins";
+
+/* ---------- Types ---------- */
 
 export type AuthUser = {
   id: string;
@@ -16,8 +19,10 @@ export type SessionState = {
   isPending: boolean;
 };
 
+type AuthError = { message?: string } | null;
+
 type AuthActionResult = {
-  error?: { message?: string } | null;
+  error?: AuthError;
   [key: string]: unknown;
 };
 
@@ -34,25 +39,37 @@ type SignUpMethod = {
   email: (payload: Record<string, unknown>) => Promise<AuthActionResult>;
 };
 
+type TokenResult = {
+  data: { token: string } | null;
+  error?: AuthError;
+};
+
 type AuthClientMethods = {
   useSession: () => SessionState;
   getSession: () => Promise<{
     data: AuthSession | null;
-    error?: { message?: string } | null;
+    error?: AuthError;
   }>;
   signIn: SignInMethod;
   signUp: SignUpMethod;
   signOut: (options?: Record<string, unknown>) => Promise<AuthActionResult>;
+  token: () => Promise<TokenResult>; // jwtClient() প্লাগিন থেকে আসে
 };
 
-const authClientBase = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+/* ---------- Client ---------- */
+
+const baseURL =
+  typeof window !== "undefined"
+    ? window.location.origin
+    : process.env.NEXT_PUBLIC_APP_URL ||
+      process.env.BETTER_AUTH_URL ||
+      "http://localhost:3000";
+
+export const authClient = createAuthClient({
+  baseURL,
+  plugins: [jwtClient()],
 }) as unknown as AuthClientMethods;
 
-export const authClient = authClientBase;
+/* ---------- Exports ---------- */
 
-export const useSession: AuthClientMethods["useSession"] = authClient.useSession;
-export const getSession: AuthClientMethods["getSession"] = authClient.getSession;
-export const signIn: AuthClientMethods["signIn"] = authClient.signIn;
-export const signUp: AuthClientMethods["signUp"] = authClient.signUp;
-export const signOut: AuthClientMethods["signOut"] = authClient.signOut;
+export const { useSession, getSession, signIn, signUp, signOut } = authClient;

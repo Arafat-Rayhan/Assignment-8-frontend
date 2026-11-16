@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getAuthHeaders } from "@/app/lib/auth-headers";
 
 interface JoinEventSectionProps {
   postId: string;
@@ -18,6 +19,7 @@ export default function JoinEventSection({
   const [isJoined, setIsJoined] = useState(false);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const API_URL = process.env.NEXT_PUBLIC_JOIN_URL;
 
@@ -30,12 +32,13 @@ export default function JoinEventSection({
       }
 
       try {
-        const res = await fetch(
-          `${API_URL}/${postId}/join-status`,
-          { method:'GET',
-            credentials: "include"
-         }
-        );
+        const headers = await getAuthHeaders();
+
+        const res = await fetch(`${API_URL}/${postId}/join-status`, {
+          method: "GET",
+          headers,
+          credentials: "include",
+        });
 
         if (!res.ok) throw new Error("Status check failed");
 
@@ -54,18 +57,28 @@ export default function JoinEventSection({
   // Join Event
   const handleJoin = async () => {
     setActionLoading(true);
+    setErrorMessage("");
 
     try {
+      const headers = await getAuthHeaders();
+
       const res = await fetch(`${API_URL}/${postId}/join`, {
         method: "POST",
+        headers,
         credentials: "include",
       });
 
-      if (!res.ok) throw new Error("Join failed");
+      if (!res.ok) {
+        const result = await res.json().catch(() => ({}));
+        throw new Error(result.message || "Join failed");
+      }
 
       setIsJoined(true);
     } catch (error) {
       console.error(error);
+      setErrorMessage(
+        error instanceof Error ? error.message : "Join failed",
+      );
     } finally {
       setActionLoading(false);
     }
@@ -74,18 +87,28 @@ export default function JoinEventSection({
   // Leave Event
   const handleLeave = async () => {
     setActionLoading(true);
+    setErrorMessage("");
 
     try {
+      const headers = await getAuthHeaders();
+
       const res = await fetch(`${API_URL}/${postId}/leave`, {
         method: "DELETE",
+        headers,
         credentials: "include",
       });
 
-      if (!res.ok) throw new Error("Leave failed");
+      if (!res.ok) {
+        const result = await res.json().catch(() => ({}));
+        throw new Error(result.message || "Leave failed");
+      }
 
       setIsJoined(false);
     } catch (error) {
       console.error(error);
+      setErrorMessage(
+        error instanceof Error ? error.message : "Leave failed",
+      );
     } finally {
       setActionLoading(false);
     }
@@ -93,10 +116,7 @@ export default function JoinEventSection({
 
   return (
     <section className="mt-8 rounded-3xl bg-slate-900 p-6 text-white sm:p-8">
-
-      <h2 className="text-2xl font-bold">
-        Interested in This Event?
-      </h2>
+      <h2 className="text-2xl font-bold">Interested in This Event?</h2>
 
       <p className="mt-3 leading-7 text-slate-300">
         Join this event and become part of the community.
@@ -107,17 +127,13 @@ export default function JoinEventSection({
           Please login to join this event.
         </p>
       ) : loading ? (
-        <p className="mt-5 text-sm text-slate-300">
-          Checking your status...
-        </p>
+        <p className="mt-5 text-sm text-slate-300">Checking your status...</p>
       ) : isJoined ? (
-
         <div className="mt-6 space-y-5">
-
           {/* Current User Information */}
           <div className="flex items-center gap-4 rounded-2xl bg-slate-800 p-4">
-
             {user.image ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={user.image}
                 alt={user.name}
@@ -131,9 +147,7 @@ export default function JoinEventSection({
 
             <div>
               <h3 className="font-semibold">{user.name}</h3>
-              <p className="text-sm text-green-400">
-                You joined this event
-              </p>
+              <p className="text-sm text-green-400">You joined this event</p>
             </div>
           </div>
 
@@ -144,11 +158,8 @@ export default function JoinEventSection({
           >
             {actionLoading ? "Please wait..." : "Leave Event"}
           </button>
-
         </div>
-
       ) : (
-
         <button
           onClick={handleJoin}
           disabled={actionLoading}
@@ -156,9 +167,13 @@ export default function JoinEventSection({
         >
           {actionLoading ? "Please wait..." : "Join Event"}
         </button>
-
       )}
 
+      {errorMessage && (
+        <p className="mt-4 rounded-lg bg-red-500/10 px-4 py-3 text-sm text-red-300">
+          {errorMessage}
+        </p>
+      )}
     </section>
   );
 }

@@ -1,8 +1,11 @@
-﻿"use client";
+﻿ 
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+"use client";
+
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { categories } from "@/app/lib/categories";
+import { getAuthHeaders } from "@/app/lib/auth-headers";
 
 type PostFormProps = {
   mode: "create" | "update";
@@ -43,25 +46,18 @@ export default function PostForm({ mode, postId }: PostFormProps) {
   const CREATE_API = process.env.NEXT_PUBLIC_CREAT_POST;
   const POST_API = process.env.NEXT_PUBLIC_POSTS_URL;
 
-  const minDate = useMemo(() => {
-    if (typeof window === "undefined") return "";
+ 
 
-    const today = new Date();
-    const localToday = new Date(
-      today.getTime() - today.getTimezoneOffset() * 60000,
-    );
 
-    return localToday.toISOString().slice(0, 10);
-  }, []);
+  const [minDate] = useState(() => {
+  const today = new Date();
+  const localToday = new Date(
+    today.getTime() - today.getTimezoneOffset() * 60000,
+  );
+  return localToday.toISOString().slice(0, 10);
+});
 
-  useEffect(() => {
-    return () => {
-      if (previewRef.current) {
-        URL.revokeObjectURL(previewRef.current);
-      }
-    };
-  }, []);
-
+  // Update mode: পুরনো পোস্ট লোড
   useEffect(() => {
     if (!isUpdate || !postId || !POST_API) return;
 
@@ -70,8 +66,8 @@ export default function PostForm({ mode, postId }: PostFormProps) {
     async function fetchPost() {
       try {
         setFetching(true);
-        const token = typeof window !== "undefined" ? localStorage.getItem("jwt_token") : null;
-        const headers = token ? { Authorization: "Bearer " + token } : {};
+
+        const headers = await getAuthHeaders();
 
         const response = await fetch(POST_API + "/" + postId, {
           method: "GET",
@@ -94,13 +90,16 @@ export default function PostForm({ mode, postId }: PostFormProps) {
         setLocation(post.location || "");
         setCategory(post.category || "");
         setEventDate(
-          post.eventDate ? new Date(post.eventDate).toISOString().split("T")[0] : "",
+          post.eventDate
+            ? new Date(post.eventDate).toISOString().split("T")[0]
+            : "",
         );
         setImagePreview(post.image || null);
       } catch (error) {
         if (active) {
           setErrors({
-            submit: error instanceof Error ? error.message : "Failed to load post.",
+            submit:
+              error instanceof Error ? error.message : "Failed to load post.",
           });
         }
       } finally {
@@ -115,7 +114,11 @@ export default function PostForm({ mode, postId }: PostFormProps) {
     };
   }, [isUpdate, postId, POST_API]);
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+  function handleChange(
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) {
     const { name, value } = e.target;
     setErrors((prev) => ({ ...prev, [name]: "" }));
     setSuccess("");
@@ -133,6 +136,9 @@ export default function PostForm({ mode, postId }: PostFormProps) {
       case "location":
         setLocation(value);
         break;
+      case "category":
+        setCategory(value);
+        break;
     }
   }
 
@@ -147,7 +153,10 @@ export default function PostForm({ mode, postId }: PostFormProps) {
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      setErrors((prev) => ({ ...prev, image: "Image size must be less than 5 MB." }));
+      setErrors((prev) => ({
+        ...prev,
+        image: "Image size must be less than 5 MB.",
+      }));
       e.target.value = "";
       return;
     }
@@ -242,11 +251,10 @@ export default function PostForm({ mode, postId }: PostFormProps) {
     if (selectedImage) formData.append("image", selectedImage);
 
     try {
-      const token = typeof window !== "undefined" ? localStorage.getItem("jwt_token") : null;
-      const headers = token ? { Authorization: "Bearer " + token } : {};
+      const headers = await getAuthHeaders();
       const url = isUpdate ? POST_API + "/" + postId : CREATE_API;
 
-      const response = await fetch(url, {
+      const response = await fetch(url as string, {
         method: isUpdate ? "PUT" : "POST",
         headers,
         credentials: "include",
@@ -259,7 +267,11 @@ export default function PostForm({ mode, postId }: PostFormProps) {
         throw new Error(result.message || "Something went wrong.");
       }
 
-      setSuccess(isUpdate ? "Post updated successfully!" : "Post published successfully!");
+      setSuccess(
+        isUpdate
+          ? "Post updated successfully!"
+          : "Post published successfully!",
+      );
 
       if (!isUpdate) {
         setTitle("");
@@ -273,11 +285,17 @@ export default function PostForm({ mode, postId }: PostFormProps) {
         router.refresh();
       }
     } catch (error: unknown) {
-      setErrors({ submit: error instanceof Error ? error.message : "Something went wrong." });
+      setErrors({
+        submit:
+          error instanceof Error ? error.message : "Something went wrong.",
+      });
     } finally {
       setLoading(false);
     }
   }
+
+
+
 
   const inputClass = "w-full rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-3.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10";
   const labelClass = "mb-2.5 block text-sm font-semibold text-slate-700";
@@ -416,7 +434,7 @@ export default function PostForm({ mode, postId }: PostFormProps) {
               >
                 <option value="">Select a category</option>
                 {categories.map((cat) => (
-                  <option key={cat.name} value={cat.name}>{cat.name}</option>
+                  <option key={cat.slug} value={cat.slug}>{cat.slug}</option>
                 ))}
               </select>
               {errors.category && <p className="mt-2 text-sm text-red-500">{errors.category}</p>}

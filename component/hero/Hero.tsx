@@ -62,7 +62,7 @@ export default function Hero() {
 
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
-              href="/events"
+              href="/upComingEvents"
               className="rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-indigo-600/25 transition hover:shadow-lg hover:shadow-indigo-600/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
             >
               Explore events

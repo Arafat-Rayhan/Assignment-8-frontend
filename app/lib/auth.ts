@@ -4,7 +4,10 @@ import { mongodbAdapter } from "@better-auth/mongo-adapter";
 import { jwt } from "better-auth/plugins";
 
 const mongoUri = process.env.BETTER_MONGODB_AUTH;
-const baseURL = process.env.BETTER_AUTH_URL || "http://localhost:3000";
+const baseURL =
+  process.env.BETTER_AUTH_URL ||
+  process.env.NEXT_PUBLIC_APP_URL ||
+  "http://localhost:3000";
 
 if (!mongoUri) {
   throw new Error("Missing BETTER_MONGODB_AUTH environment variable");
@@ -36,6 +39,12 @@ const socialProviders = {
       }
     : {}),
 };
+
+if (Object.keys(socialProviders).length === 0) {
+  console.warn(
+    "Social login is disabled because no OAuth credentials were found. Set GOOGLE_CLIENT_ID/SECRET and GITHUB_CLIENT_ID/SECRET."
+  );
+}
 
 export const auth = betterAuth({
   emailAndPassword: {

@@ -672,11 +672,25 @@ const SignUp = () => {
   };
 
   const handleGoogle = async () => {
-    await signIn.social({ provider: "google" });
+    try {
+      setLoading(true);
+      await signIn.social({ provider: "google", callbackURL: "/" });
+    } catch {
+      setErrorMessage("Google sign in failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleGitHub = async () => {
-    await signIn.social({ provider: "github" });
+    try {
+      setLoading(true);
+      await signIn.social({ provider: "github", callbackURL: "/" });
+    } catch {
+      setErrorMessage("GitHub sign in failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

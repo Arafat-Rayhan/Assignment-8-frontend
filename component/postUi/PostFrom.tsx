@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { categories } from "@/app/lib/categories";
 import { getAuthHeaders } from "@/app/lib/auth-headers";
+import {toast} from 'sonner'
 
 type PostFormProps = {
   mode: "create" | "update";
@@ -127,6 +128,7 @@ export default function PostForm({ mode, postId }: PostFormProps) {
     const { name, value } = e.target;
     setErrors((prev) => ({ ...prev, [name]: "" }));
     setSuccess("");
+    toast.success('CHANGE')
 
     switch (name) {
       case "title":
@@ -156,6 +158,7 @@ export default function PostForm({ mode, postId }: PostFormProps) {
       e.target.value = "";
       return;
     }
+    toast.success('CHANGE IMAGE')
 
     if (file.size > 5 * 1024 * 1024) {
       setErrors((prev) => ({
@@ -262,6 +265,7 @@ export default function PostForm({ mode, postId }: PostFormProps) {
 
       if (!response.ok) {
         throw new Error(result.message || "Something went wrong.");
+        toast.error('SOMETHING WRONG')
       }
 
       setSuccess(

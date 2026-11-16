@@ -25,7 +25,7 @@ export default function NotFound() {
           </Link>
 
           <Link
-            href="/upcoming-events"
+            href="/upComingEvents"
             className="rounded-xl border border-gray-200 bg-white px-6 py-3 font-semibold text-gray-800 transition hover:bg-gray-50"
           >
             Upcoming Events

@@ -46,16 +46,18 @@ export default function PostForm({ mode, postId }: PostFormProps) {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [success, setSuccess] = useState("");
+ 
 
-  const [minDate, setMinDate] = useState("");
 
-  useEffect(() => {
-    const today = new Date();
-    const localToday = new Date(
-      today.getTime() - today.getTimezoneOffset() * 60000,
-    );
-    setMinDate(localToday.toISOString().slice(0, 10));
-  }, []);
+  function getLocalDateString() {
+  const today = new Date();
+
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
 
   // unmount হলে preview URL মুছে দাও
   useEffect(() => {
@@ -199,9 +201,9 @@ export default function PostForm({ mode, postId }: PostFormProps) {
 
     if (!eventDate) {
       newErrors.eventDate = "Please select an event date.";
-    } else if (!isUpdate && eventDate < minDate) {
-      newErrors.eventDate = "Past dates are not allowed.";
-    }
+    } else if (!isUpdate && eventDate < getLocalDateString()) {
+  newErrors.eventDate = "Past dates are not allowed.";
+}
 
     if (!location.trim()) {
       newErrors.location = "Location is required.";
@@ -384,7 +386,7 @@ export default function PostForm({ mode, postId }: PostFormProps) {
                   id="eventDate"
                   name="eventDate"
                   type="date"
-                  min={minDate}
+                  min={getLocalDateString()}
                   value={eventDate}
                   onChange={handleChange}
                   className={inputClass}

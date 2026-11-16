@@ -3,14 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { signOut, useSession } from '@/app/lib/auth-client';
-import { authClient } from '@/app/lib/auth-client';
-import ThemeToggle from '@/component/black and white/DarkWhite'
+import { signOut, useSession } from "@/app/lib/auth-client";
+import ThemeToggle from "@/component/black and white/DarkWhite";
 
 const publicLinks = [
   { href: "/", label: "Home" },
   { href: "/upComingEvents", label: "Upcoming Events" },
-  { href: "/joined", label: "Joined event" },
 ];
 
 const menuLinks = [
@@ -48,12 +46,13 @@ function Avatar({
       />
     );
   }
+
   return (
     <span
       className={`${className} flex items-center justify-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700`}
     >
       {(name?.trim()?.[0] ?? "U").toUpperCase()}
-    </span> 
+    </span>
   );
 }
 
@@ -63,30 +62,17 @@ export default function Navbar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const pathname = usePathname();
-  const [activePathname, setActivePathname] = useState<string | null>(null);
   const router = useRouter();
   const { data: session, isPending } = useSession();
   const user = session?.user ?? null;
 
-  useEffect(() => {
-    setActivePathname(pathname);
-  }, [pathname]);
-
   const linkClass = (href: string) =>
-  `rounded-xl px-4 py-2 text-sm font-medium transition-colors ${
-    activePathname === href
-      ? "bg-indigo-50 text-indigo-700"
-      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-  }`;
+    `rounded-xl px-4 py-2 text-sm font-medium transition-colors ${
+      pathname === href
+        ? "bg-indigo-50 text-indigo-700"
+        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+    }`;
 
-  
-
-   
-
-
-
-
- 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -96,8 +82,10 @@ export default function Navbar() {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setDropdownOpen(false);
     };
+
     document.addEventListener("mousedown", onClick);
     document.addEventListener("keydown", onKey);
+
     return () => {
       document.removeEventListener("mousedown", onClick);
       document.removeEventListener("keydown", onKey);
@@ -105,11 +93,7 @@ export default function Navbar() {
   }, []);
 
   const handleLogout = async () => {
- 
-  
- 
-    await authClient.signOut({
- 
+    await signOut({
       fetchOptions: {
         onSuccess: () => {
           setDropdownOpen(false);
@@ -120,8 +104,6 @@ export default function Navbar() {
       },
     });
   };
-
-  
    
  
 return (

@@ -1,26 +1,41 @@
 {
   "compilerOptions": {
+<<<<<<< HEAD
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"]
     },
+=======
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
+<<<<<<< HEAD
     "strict": false,
     "noEmit": true,
     "incremental": true,
     "module": "esnext",
     "esModuleInterop": true,
+=======
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
+<<<<<<< HEAD
+=======
+    "incremental": true,
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
     "plugins": [
       {
         "name": "next"
       }
+<<<<<<< HEAD
     ]
   },
   "include": [
@@ -33,3 +48,20 @@
   ],
   "exclude": ["node_modules"]
 }
+=======
+    ],
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts"
+  ],
+  "exclude": ["node_modules"]
+}
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23

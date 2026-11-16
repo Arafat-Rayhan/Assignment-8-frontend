@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 // "use client";
 
 // import { useEffect, useState } from "react";
@@ -544,6 +545,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+=======
+"use client";
+
+import { useEffect, useState } from "react";
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
 import { signUp, signIn } from "@/app/lib/auth-client";
 import { useRouter } from "next/navigation";
 
@@ -575,6 +581,7 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+<<<<<<< HEAD
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Image Preview cleanup
@@ -594,6 +601,17 @@ const SignUp = () => {
       fileInputRef.current.value = "";
     }
   };
+=======
+  // Image Preview
+  {/* Social Login */}
+  useEffect(() => {
+  return () => {
+    if (preview) {
+      URL.revokeObjectURL(preview);
+    }
+  };
+}, [preview]);
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
 
   // Image Upload Function
   const handleImageUpload = async () => {
@@ -623,7 +641,13 @@ const SignUp = () => {
   };
 
   // Registration Function
+<<<<<<< HEAD
   const onSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
+=======
+  const onSubmit = async (
+    e: React.SyntheticEvent<HTMLFormElement>
+  ) => {
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
     e.preventDefault();
 
     setLoading(true);
@@ -636,8 +660,15 @@ const SignUp = () => {
       const email = String(formData.get("email") || "");
       const password = String(formData.get("password") || "");
 
+<<<<<<< HEAD
       const imageUrl = await handleImageUpload();
 
+=======
+      // Upload Image First
+      const imageUrl = await handleImageUpload();
+
+      // Better Auth Registration
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
       const payload: {
         name: string;
         email: string;
@@ -662,15 +693,25 @@ const SignUp = () => {
       }
 
       router.push("/");
+<<<<<<< HEAD
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : "Something went wrong"
+=======
+
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong"
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
       );
     } finally {
       setLoading(false);
     }
   };
 
+<<<<<<< HEAD
   const handleGoogle = async () => {
     try {
       setLoading(true);
@@ -691,10 +732,25 @@ const SignUp = () => {
     } finally {
       setLoading(false);
     }
+=======
+  // Google Sign In
+  const handleGoogle = async () => {
+    await signIn.social({
+      provider: "google",
+    });
+  };
+
+  // GitHub Sign In
+  const handleGitHub = async () => {
+    await signIn.social({
+      provider: "github",
+    });
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-100 p-4 sm:p-8">
+<<<<<<< HEAD
       <div className="w-full max-w-6xl overflow-hidden rounded-3xl bg-white shadow-2xl grid grid-cols-1 lg:grid-cols-2">
         {/* Left Side */}
         <div className="hidden lg:flex flex-col justify-between relative overflow-hidden bg-gradient-to-br from-indigo-700 via-blue-700 to-purple-800 p-12 text-white">
@@ -754,6 +810,118 @@ const SignUp = () => {
         <div className="p-6 sm:p-10 lg:p-12">
           <div className="mb-8">
             <p className="text-sm font-medium text-indigo-600">GET STARTED</p>
+=======
+
+      <div className="w-full max-w-6xl overflow-hidden rounded-3xl bg-white shadow-2xl grid grid-cols-1 lg:grid-cols-2">
+
+
+
+
+
+
+
+       {/* Left Side */}
+<div className="hidden lg:flex flex-col justify-between relative overflow-hidden bg-gradient-to-br from-indigo-700 via-blue-700 to-purple-800 p-12 text-white">
+
+  {/* Decorative Background */}
+  <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-blue-400/20" />
+
+  <div className="absolute -bottom-32 -left-20 h-80 w-80 rounded-full bg-purple-400/20" />
+
+  {/* Logo */}
+  <div className="relative z-10">
+    <h2 className="text-3xl font-bold tracking-wide">
+      MyApp
+    </h2>
+
+    <div className="mt-16">
+      <h1 className="text-5xl font-bold leading-tight">
+        Join Our
+        <br />
+        Community
+      </h1>
+
+      <p className="mt-6 max-w-sm text-lg leading-8 text-indigo-100">
+        Create your account and become a part of
+        something great.
+      </p>
+    </div>
+  </div>
+
+  {/* Illustration */}
+  <div className="relative z-10 flex items-center justify-center py-8">
+
+    <div className="relative flex h-64 w-64 rotate-[-8deg] items-center justify-center rounded-[40px] border border-white/30 bg-white/15 shadow-2xl backdrop-blur-md">
+
+      <div className="flex h-44 w-44 items-center justify-center rounded-3xl bg-white shadow-xl">
+
+        <FaUserCircle className="h-32 w-32 text-blue-600" />
+
+      </div>
+
+      <FaPlusCircle className="absolute -bottom-5 -right-5 h-16 w-16 rounded-full bg-green-500 text-white shadow-lg" />
+
+      <div className="absolute -right-10 top-5 rounded-2xl bg-white/20 p-4 backdrop-blur-md">
+        <span className="text-3xl">🔒</span>
+      </div>
+
+      <div className="absolute -left-10 bottom-8 rounded-2xl bg-white/20 p-4 backdrop-blur-md">
+        <span className="text-3xl">📸</span>
+      </div>
+
+    </div>
+
+  </div>
+
+  {/* Features */}
+  <div className="relative z-10 space-y-5">
+
+    <p className="flex items-center gap-3">
+      <FaCheckCircle className="text-xl text-green-400" />
+      Create and share posts
+    </p>
+
+    <p className="flex items-center gap-3">
+      <FaCheckCircle className="text-xl text-green-400" />
+      Connect with friends
+    </p>
+
+    <p className="flex items-center gap-3">
+      <FaCheckCircle className="text-xl text-green-400" />
+      Explore amazing content
+    </p>
+
+  </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        {/* rrrrrr */}
+
+       <div className="p-6 sm:p-10 lg:p-12">
+
+          <div className="mb-8">
+            <p className="text-sm font-medium text-indigo-600">
+              GET STARTED
+            </p>
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
 
             <h1 className="mt-2 text-3xl font-bold text-gray-900">
               Create Account
@@ -764,9 +932,20 @@ const SignUp = () => {
             </p>
           </div>
 
+<<<<<<< HEAD
           <Form className="w-full" onSubmit={onSubmit}>
             <Fieldset className="w-full">
               <FieldGroup className="gap-5">
+=======
+          <Form
+            className="w-full"
+            onSubmit={onSubmit}
+          >
+
+            <Fieldset className="w-full">
+              <FieldGroup className="gap-5">
+
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
                 {/* Name */}
                 <TextField
                   name="name"
@@ -787,7 +966,15 @@ const SignUp = () => {
                 </TextField>
 
                 {/* Email */}
+<<<<<<< HEAD
                 <TextField name="email" type="email" isRequired>
+=======
+                <TextField
+                  name="email"
+                  type="email"
+                  isRequired
+                >
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
                   <Label>Email Address</Label>
                   <Input
                     placeholder="Enter your email"
@@ -796,7 +983,23 @@ const SignUp = () => {
                   <FieldError />
                 </TextField>
 
+<<<<<<< HEAD
                 {/* Password */}
+=======
+
+
+
+
+
+
+
+
+
+
+
+
+                  {/* Password */}
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
                 <TextField
                   name="password"
                   type="password"
@@ -806,12 +1009,24 @@ const SignUp = () => {
                     if (value.length < 8) {
                       return "At least 8 characters required";
                     }
+<<<<<<< HEAD
                     if (!/[A-Z]/.test(value)) {
                       return "One uppercase letter required";
                     }
                     if (!/[0-9]/.test(value)) {
                       return "One number required";
                     }
+=======
+
+                    if (!/[A-Z]/.test(value)) {
+                      return "One uppercase letter required";
+                    }
+
+                    if (!/[0-9]/.test(value)) {
+                      return "One number required";
+                    }
+
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
                     return null;
                   }}
                 >
@@ -823,7 +1038,12 @@ const SignUp = () => {
                   />
 
                   <Description>
+<<<<<<< HEAD
                     At least 8 characters, 1 uppercase letter and 1 number.
+=======
+                    At least 8 characters, 1 uppercase
+                    letter and 1 number.
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
                   </Description>
 
                   <FieldError />
@@ -834,8 +1054,23 @@ const SignUp = () => {
                   <Label>Profile Image</Label>
 
                   <div className="flex flex-col sm:flex-row items-center gap-5">
+<<<<<<< HEAD
                     <label className="flex min-h-32 flex-1 w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-indigo-300 bg-indigo-50/50 p-5 transition hover:bg-indigo-50">
                       <span className="text-3xl text-indigo-600">↑</span>
+=======
+
+                    <label className="flex min-h-32 flex-1 w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-indigo-300 bg-indigo-50/50 p-5 transition hover:bg-indigo-50">
+
+                      <span className="text-3xl text-indigo-600">
+                        ↑
+                      </span>
+
+
+
+
+
+
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
 
                       <span className="mt-2 font-semibold text-gray-800">
                         Click to upload
@@ -846,7 +1081,10 @@ const SignUp = () => {
                       </span>
 
                       <input
+<<<<<<< HEAD
                         ref={fileInputRef}
+=======
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
                         type="file"
                         accept="image/png,image/jpeg,image/webp"
                         className="hidden"
@@ -869,13 +1107,23 @@ const SignUp = () => {
 
                           setErrorMessage("");
                           setImage(file);
+<<<<<<< HEAD
                           setPreview(URL.createObjectURL(file));
                         }}
                       />
+=======
+                        }}
+                      />
+
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
                     </label>
 
                     {/* Image Preview */}
                     <div className="relative flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-full border-4 border-indigo-100 bg-gray-100">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
                       {preview ? (
                         <img
                           src={preview}
@@ -883,6 +1131,7 @@ const SignUp = () => {
                           className="h-full w-full object-cover"
                         />
                       ) : (
+<<<<<<< HEAD
                         <span className="text-3xl text-gray-400">👤</span>
                       )}
 
@@ -890,11 +1139,28 @@ const SignUp = () => {
                         <button
                           type="button"
                           onClick={handleRemoveImage}
+=======
+                        <span className="text-3xl text-gray-400">
+                          👤
+                        </span>
+                      )}
+
+
+
+                        {preview && (
+                        <button
+                          type="button"
+                          onClick={() => setImage(null)}
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
                           className="absolute right-0 top-0 rounded-full bg-red-500 px-2 py-1 text-xs text-white"
                         >
                           ✕
                         </button>
                       )}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
                     </div>
                   </div>
 
@@ -904,6 +1170,10 @@ const SignUp = () => {
                     </p>
                   )}
                 </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
               </FieldGroup>
 
               {/* Error Message */}
@@ -912,8 +1182,15 @@ const SignUp = () => {
                   {errorMessage}
                 </p>
               )}
+<<<<<<< HEAD
               {/* Submit */}
               <Fieldset.Actions className="mt-7 flex flex-col gap-3">
+=======
+
+              {/* Submit */}
+              <Fieldset.Actions className="mt-7 flex flex-col gap-3">
+
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
                 <Button
                   type="submit"
                   isDisabled={loading}
@@ -921,6 +1198,7 @@ const SignUp = () => {
                 >
                   {loading ? "Creating Account..." : "Create Account →"}
                 </Button>
+<<<<<<< HEAD
               </Fieldset.Actions>
             </Fieldset>
           </Form>
@@ -953,6 +1231,64 @@ const SignUp = () => {
               GitHub
             </Button>
           </div>
+=======
+
+
+
+                </Fieldset.Actions>
+
+            </Fieldset>
+
+          </Form>
+ 
+
+
+{/* Social Login */}
+<div className="my-7 flex items-center gap-4">
+
+  <div className="h-px flex-1 bg-gray-200" />
+
+  <span className="text-sm text-gray-500">
+    Or continue with
+  </span>
+
+  <div className="h-px flex-1 bg-gray-200" />
+
+</div>
+
+
+
+
+
+<div className="flex justify-between">
+
+  {/* Google */}
+  <Button
+    type="button"
+    variant="secondary"
+    onPress={handleGoogle}
+    className="h-12 w-full rounded-xl border border-gray-200 bg-white text-gray-800 hover:bg-gray-50"
+  >
+    <FaGoogle className="mr-2 h-5 w-5 text-[#4285F4]" />
+    Google
+  </Button>
+
+  {/* GitHub */}
+  <Button
+    type="button"
+    variant="secondary"
+    onPress={handleGitHub}
+    className="h-12   rounded-xl border border-gray-200 bg-white text-gray-800 hover:bg-gray-50"
+  >
+    <FaGithub className="mr-2 h-5 w-5 text-black" />
+    GitHub
+  </Button>
+
+</div>
+
+
+
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
 
           <p className="mt-8 text-center text-sm text-gray-500">
             Already have an account?{" "}
@@ -964,10 +1300,18 @@ const SignUp = () => {
               Sign In
             </button>
           </p>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23
         </div>
       </div>
     </div>
   );
 };
 
+<<<<<<< HEAD
 export default SignUp
+=======
+export default SignUp;
+>>>>>>> 1a2e94553155da1aeceff124478722b03a3ede23

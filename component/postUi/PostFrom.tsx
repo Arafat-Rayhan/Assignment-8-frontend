@@ -128,7 +128,6 @@ export default function PostForm({ mode, postId }: PostFormProps) {
     const { name, value } = e.target;
     setErrors((prev) => ({ ...prev, [name]: "" }));
     setSuccess("");
-    toast.success('CHANGE')
 
     switch (name) {
       case "title":
@@ -158,7 +157,6 @@ export default function PostForm({ mode, postId }: PostFormProps) {
       e.target.value = "";
       return;
     }
-    toast.success('CHANGE IMAGE')
 
     if (file.size > 5 * 1024 * 1024) {
       setErrors((prev) => ({
@@ -226,6 +224,7 @@ export default function PostForm({ mode, postId }: PostFormProps) {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
+    
     const newErrors = validate();
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -268,6 +267,11 @@ export default function PostForm({ mode, postId }: PostFormProps) {
         toast.error('SOMETHING WRONG')
       }
 
+      // if(response.ok){
+
+      //   toast.success('CREATED POAST')
+      // }
+
       setSuccess(
         isUpdate
           ? "Post updated successfully!"
@@ -292,6 +296,7 @@ export default function PostForm({ mode, postId }: PostFormProps) {
       });
     } finally {
       setLoading(false);
+      toast.success('CREATED POAST')
     }
   }
 

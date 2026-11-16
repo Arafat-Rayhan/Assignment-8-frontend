@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getAuthHeaders } from "@/app/lib/auth-headers";
+import {toast} from 'sonner'
 
 interface JoinEventSectionProps {
   postId: string;
@@ -67,6 +68,7 @@ export default function JoinEventSection({
         headers,
         credentials: "include",
       });
+              toast.success('join success')
 
       if (!res.ok) {
         const result = await res.json().catch(() => ({}));
@@ -98,10 +100,16 @@ export default function JoinEventSection({
         credentials: "include",
       });
 
+        toast.success('leave success')
+
+
+
+
       if (!res.ok) {
         const result = await res.json().catch(() => ({}));
         throw new Error(result.message || "Leave failed");
       }
+
 
       setIsJoined(false);
     } catch (error) {

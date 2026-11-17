@@ -179,7 +179,7 @@ export default function ManageEventsPage() {
                 </div>
               </Link>
 
-              {/* বাটন: শুধু Created ট্যাবে */}
+              {/* btn */}
               {activeTab === "created" && (
                 <div className="flex gap-3 p-4 pt-2">
                   <Link

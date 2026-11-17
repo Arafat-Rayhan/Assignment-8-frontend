@@ -258,6 +258,10 @@ return (
             <Link href="/joined" onClick={() => setMobileOpen(false)} className={linkClass("/joined")}>
               Joined event
              </Link>
+            <Link href= "/manageEvent" onClick={() => setMobileOpen(false)} className={linkClass("/manageEvent")}>
+              Joined event
+             </Link>
+             
             </>
           )}
         </div>

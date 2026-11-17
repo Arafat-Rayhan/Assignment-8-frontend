@@ -12,7 +12,7 @@ type Post = {
   location?: string;
 };
 
-const POST_API = process.env.NEXT_PUBLIC_POSTS_URL;
+const POST_API = process.env.NEXT_PUBLIC_JOIN_URL
 
 export default function JoinedEventsPage() {
   const [posts, setPosts] = useState<Post[]>([]);

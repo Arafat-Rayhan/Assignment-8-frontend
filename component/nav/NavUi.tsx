@@ -259,7 +259,7 @@ return (
               Joined event
              </Link>
             <Link href= "/manageEvent" onClick={() => setMobileOpen(false)} className={linkClass("/manageEvent")}>
-              Joined event
+              ManageMyPost
              </Link>
              
             </>

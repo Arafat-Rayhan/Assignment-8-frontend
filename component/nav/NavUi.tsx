@@ -246,7 +246,7 @@ return (
  
          
  
-          <Link href="/events" onClick={() => setMobileOpen(false)} className={linkClass("/events")}>
+          <Link href="/upComingEvents" onClick={() => setMobileOpen(false)} className={linkClass("/events")}>
  
             Upcoming Events
           </Link>
